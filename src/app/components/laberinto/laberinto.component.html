@@ -1,0 +1,66 @@
+<div class="flex justify-center items-center h-screen bg-gray-900">
+
+  <div class="relative">
+
+    <!-- Contenedor superior con Salida y Reinicio -->
+    <div class="absolute -top-12 left-0 right-0 flex justify-between items-center px-2">
+        <div class="badge badge-lg badge-success text-white font-bold shadow-xl">
+          SALIDA
+        </div>
+        <button class="btn btn-error btn-sm" (click)="resetGame()">
+          Reiniciar
+        </button>
+    </div>
+
+    <!-- La cuadrícula principal del laberinto -->
+    <div class="grid" [style.--grid-cols]="laberinto.length">
+      @for (row of laberinto; track $index; let filaIndex = $index) {
+        @for (cell of row; track $index; let columnaIndex = $index) {
+
+          <!-- 1. Prioridad máxima: Celda permanentemente errónea (Roja) -->
+          @if (celdasErroneas()[filaIndex][columnaIndex]) {
+             <div class="relative w-8 h-8 bg-red-900 border border-red-600 flex items-center justify-center animate-pulse">
+                <span class="text-error text-2xl">☠️</span>
+                <!-- Asegúrate de poner aquí el jugador si está en esta celda -->
+                @if (jugadorPos.x === columnaIndex && jugadorPos.y === filaIndex) {
+                 <div class="w-4 h-4 bg-blue-500 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-lg"></div>
+                }
+             </div>
+          }
+          <!-- 2. Siguiente prioridad: Celda NO visitada (Niebla) -->
+          @else if (!visitado()[filaIndex][columnaIndex]) {
+            <div class="w-8 h-8 bg-gray-900 border border-gray-700 opacity-90 transition-opacity duration-300"></div>
+          }
+          <!-- 3. Por defecto: Celda visitada (Camino normal, meta, llave) -->
+          @else {
+
+            <div class="relative w-8 h-8 border border-gray-600"
+                 [ngClass]="{
+                   'bg-gray-700': cell === 1,
+                   'bg-gray-800': cell === 0 || cell === TIPO_TRAMPA
+                 }">
+
+              <!-- Contenido VISIBLE: Meta, Llave, Jugador (ya no hace falta icono de calavera aquí) -->
+
+              <!-- Meta/Salida -->
+              @if (metaPos.x === columnaIndex && metaPos.y === filaIndex) {
+                 <div class="w-full h-full flex items-center justify-center">
+                    <span class="badge badge-success badge-sm text-xs font-bold">META</span>
+                 </div>
+              }
+              <!-- Llave -->
+              @if (!haRecogidoLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex) {
+                 <div class="w-4 h-4 bg-yellow-400 rounded-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-md"></div>
+              }
+              <!-- Jugador -->
+              @if (jugadorPos.x === columnaIndex && jugadorPos.y === filaIndex) {
+                 <div class="w-4 h-4 bg-blue-500 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-lg"></div>
+              }
+
+            </div>
+          }
+        }
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+.grid {
+  display: grid;
+  /* Utiliza una variable CSS para definir el número de columnas dinámicamente */
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+}

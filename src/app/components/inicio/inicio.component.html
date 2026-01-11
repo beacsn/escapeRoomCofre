@@ -1,0 +1,49 @@
+<div class="hero min-h-screen bg-base-200" data-theme="cyberpunk">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <div class="mockup-code mb-8 text-left">
+        <pre data-prefix="$"><code>iniciar --protocolo-escape</code></pre>
+        <pre data-prefix=">" class="text-warning"><code>Acceso restringido...</code></pre>
+        <pre data-prefix=">" class="text-success"><code>Cofre detectado. Introduce código.</code></pre>
+      </div>
+
+      <h1 class="text-5xl font-bold italic underline">EL MISTERIO DEL COFRE</h1>
+      <p class="py-6">Tienes 30 minutos para descifrar los 3 dígitos antes de que el cofre se bloquee para siempre.</p>
+
+      <div class="grid grid-flow-col gap-5 text-center auto-cols-max justify-center my-8">
+        <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span class="countdown font-mono text-5xl">
+            <span [style.--value]="minutes"></span>
+          </span>
+          min
+        </div>
+        <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span class="countdown font-mono text-5xl">
+            <span [style.--value]="seconds"></span>
+          </span>
+          sec
+        </div>
+      </div>
+
+
+
+      <!-- Botón para ir al componente del laberinto -->
+      <button class="btn btn-primary btn-lg shadow-lg" routerLink="/laberinto">
+        COMENZAR DESAFÍO
+      </button>
+    </div>
+  </div>
+
+<label class="btn btn-circle swap swap-rotate fixed bottom-5 right-5">
+  <!-- Checkbox oculto que controla el estado -->
+  <input type="checkbox" (change)="toggleAudio($event)" />
+
+  <!-- Icono de Volumen ON (se muestra cuando está checked) -->
+  <svg class="swap-on fill-current" xmlns="www.w3.org" width="32" height="32" viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23Z"/></svg>
+
+  <!-- Icono de Volumen OFF (se muestra cuando NO está checked) -->
+  <svg class="swap-off fill-current" xmlns="www.w3.org" width="32" height="32" viewBox="0 0 24 24"><path d="M3,9H7L12,4V20L7,15H3V9M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12Z"/></svg>
+</label>
+
+
+</div>
