@@ -156,6 +156,6 @@ export class LaberintoComponent {
 
   onGameWin() {
     alert("¡Has superado el laberinto y tienes la llave! El primer dígito es: 2");
-    this.router.navigate(['/final']);
+    this.router.navigate(['/radio']);
   }
 }
