@@ -21,7 +21,10 @@ export class RadioComponent implements OnDestroy { // Implementa OnDestroy para 
   porcentajeSintonizado: number = 0; // Para mostrar una barra de progreso
 
   pruebaCompletada: boolean = false;
-  isFlashing: boolean = false; // Lo mantenemos para el efecto visual del 5
+  isFlashing: boolean = false; // Lo mantenemos para el efecto visual del 1
+
+  audio!: HTMLAudioElement;
+  audioUnlocked = false;
 
    @ViewChild('audioPlayer') audioPlayerRef!: ElementRef<HTMLAudioElement>;
 
@@ -36,14 +39,25 @@ export class RadioComponent implements OnDestroy { // Implementa OnDestroy para 
    }
 
   ngAfterViewInit() {
-    // Asegúrate de que el audio empieza a sonar en bucle cuando el componente carga
-    if (this.audioPlayerRef.nativeElement) {
-      this.audioPlayerRef.nativeElement.loop = true;
-      this.audioPlayerRef.nativeElement.volume = 0.9; // Empieza con volumen alto
-      this.audioPlayerRef.nativeElement.play();
-    }
-  }
+  //this.audio = new Audio('radio-static.mp3');
+  this.audio.loop = true;
+  this.audio.volume = 0.6;
+}
 
+unlockAudio() {
+  if (!this.audioUnlocked && this.audioPlayerRef?.nativeElement) {
+    this.audioPlayerRef.nativeElement
+      .play()
+      .then(() => this.audioUnlocked = true)
+      .catch(err => console.warn('Audio bloqueado:', err));
+  }
+}
+
+silenciarAudio() {
+  if (this.audioPlayerRef?.nativeElement) {
+    this.audioPlayerRef.nativeElement.pause();
+  }
+}
 
   get opacidadEstatica(): number {
     // Si está completado o flasheando, no hay estática
@@ -57,6 +71,7 @@ export class RadioComponent implements OnDestroy { // Implementa OnDestroy para 
 
     // Ajusta el volumen del elemento nativo si existe
     if (this.audioPlayerRef && this.audioPlayerRef.nativeElement) {
+      //console.log(volumen);
       this.audioPlayerRef.nativeElement.volume = volumen;
     }
 
@@ -64,6 +79,7 @@ export class RadioComponent implements OnDestroy { // Implementa OnDestroy para 
   }
 
   comprobarSintonizacion() {
+     this.unlockAudio();
     const distancia = Math.abs(this.frecuenciaActual - this.frecuenciaGanadora);
 
     if (distancia <= this.margenExito) {

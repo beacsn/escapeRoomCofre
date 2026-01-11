@@ -1,7 +1,7 @@
 <!-- src/app/components/radio/radio.component.html -->
 
 <!-- Añade el elemento audio al principio del HTML -->
-<audio #audioPlayer src="radio-static.mp3" muted></audio>
+<audio #audioPlayer src="radio-static.mp3" loop></audio>
 
 <div class="flex flex-col items-center justify-center min-h-screen bg-black p-4">
   <div class="w-full max-w-sm bg-[#22170f] rounded-xl shadow-2xl p-6">
@@ -63,7 +63,7 @@
       @if (pruebaCompletada) {
         <button class="btn btn-warning btn-block shadow-md hover:shadow-lg transition-shadow"
                 routerLink="/tercera-prueba"
-                (click)="audioPlayerRef.nativeElement.muted = true"> <!-- Silencia el audio al continuar -->
+                (click)=silenciarAudio()> <!-- Silencia el audio al continuar -->
           He memorizado el código, continuar
         </button>
       } @else {
