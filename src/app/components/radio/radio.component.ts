@@ -1,5 +1,5 @@
 // radio.component.ts
-import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common'; // Si usas ngClass, si no no hace falta
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common'; // Si usas ngClass, si no no hac
   templateUrl: './radio.component.html',
   // ...
 })
-export class RadioComponent implements OnDestroy { // Implementa OnDestroy para limpiar el temporizador
+export class RadioComponent implements OnDestroy, OnInit { // Implementa OnDestroy para limpiar el temporizador
   frecuenciaActual: number = 88.0;
   frecuenciaGanadora: number = 104.2;
   margenExito: number = 0.01; // ¡Muy estricto!
@@ -26,7 +26,21 @@ export class RadioComponent implements OnDestroy { // Implementa OnDestroy para 
   audio!: HTMLAudioElement;
   audioUnlocked = false;
 
+  audioSignal!: HTMLAudioElement;
+  signalPlayed = false;
+
    @ViewChild('audioPlayer') audioPlayerRef!: ElementRef<HTMLAudioElement>;
+
+ngOnInit() {
+  // Estática
+  //this.audio = new Audio('assets/audio/radio-static.mp3');
+  //this.audio.loop = true;
+  //this.audio.volume = 0.6;
+
+  // Señal encontrada
+  this.audioSignal = new Audio('assets/audio/signal-found.mp3');
+  this.audioSignal.volume = 0.8;
+}
 
  ngOnDestroy() {
      if (this.sintonizandoTimeout) {
@@ -42,6 +56,7 @@ export class RadioComponent implements OnDestroy { // Implementa OnDestroy para 
   //this.audio = new Audio('radio-static.mp3');
   this.audio.loop = true;
   this.audio.volume = 0.6;
+
 }
 
 unlockAudio() {
@@ -67,7 +82,7 @@ silenciarAudio() {
     // Controlamos la opacidad general por la distancia actual
     //return Math.min(0.9, distancia / 4);
 
-    const volumen = Math.min(0.9, distancia / 4);
+    const volumen = Math.min(1, Math.pow(distancia / 3, 2));
 
     // Ajusta el volumen del elemento nativo si existe
     if (this.audioPlayerRef && this.audioPlayerRef.nativeElement) {
@@ -93,20 +108,47 @@ silenciarAudio() {
       // Si se mueve, reiniciamos el temporizador y el progreso
       this.resetearSintonizacion();
     }
+
+    if (distancia <= this.margenExito) {
+      this.audioPlayerRef.nativeElement.volume = 0.05;
+    } else {
+      this.audioPlayerRef.nativeElement.volume = Math.min(1, Math.pow(distancia / 3, 2));
+    }
+
   }
 
   iniciarSintonizacionTemporizada() {
-    this.sintonizandoTimeout = setTimeout(() => {
-      this.isFlashing = true; // Empieza el flash del 5
-      this.porcentajeSintonizado = 100;
+  this.sintonizandoTimeout = setTimeout(() => {
+    this.isFlashing = true;
+    this.porcentajeSintonizado = 100;
 
-      setTimeout(() => {
-        this.isFlashing = false;
-        this.pruebaCompletada = true; // La prueba se completa, el 5 desaparece pero el botón se queda
-      }, 1500); // Duración del flash
+    // 🔊 AQUÍ
+    this.reproducirSenalEncontrada();
 
-    }, this.tiempoSintonizacionMs);
+    setTimeout(() => {
+      this.isFlashing = false;
+      this.pruebaCompletada = true;
+    }, 1500);
+
+  }, this.tiempoSintonizacionMs);
+}
+
+reproducirSenalEncontrada() {
+  if (this.signalPlayed || !this.audioSignal) return;
+
+  this.signalPlayed = true;
+
+  if (this.audioPlayerRef?.nativeElement) {
+    this.audioPlayerRef.nativeElement.volume = 0.05;
   }
+
+  console.log("Señal encontrada");
+
+  this.audioSignal.currentTime = 0;
+  this.audioSignal.play()
+    .catch(err => console.warn('No se pudo reproducir señal:', err));
+}
+
 
   resetearSintonizacion() {
     if (this.sintonizandoTimeout) {
@@ -125,4 +167,14 @@ silenciarAudio() {
       'shadow-amber-500/50': this.pruebaCompletada,
     };
   }
+
+  get mensajePantalla(): string {
+    const distancia = Math.abs(this.frecuenciaActual - this.frecuenciaGanadora);
+
+    if (this.pruebaCompletada) return 'SEÑAL ESTABLE';
+    if (distancia < 0.2) return 'SEÑAL CASI CLARA...';
+    if (distancia < 0.5) return 'INTERFERENCIA BAJA';
+    return 'BUSCANDO SEÑAL...';
+  }
+
 }
