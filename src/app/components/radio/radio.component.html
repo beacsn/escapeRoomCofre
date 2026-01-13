@@ -1,73 +1,83 @@
-<!-- src/app/components/radio/radio.component.html -->
-
-<!-- Añade el elemento audio al principio del HTML -->
-<audio #audioPlayer src="radio-static.mp3" loop></audio>
+<!-- Audio de estática -->
+<audio #audioPlayer src="assets/audio/radio-static.mp3" loop></audio>
 
 <div class="flex flex-col items-center justify-center min-h-screen bg-black p-4">
   <div class="w-full max-w-sm bg-[#22170f] rounded-xl shadow-2xl p-6">
-    <h2 class="text-white text-center text-xl font-sans uppercase mb-6 tracking-widest">SINTONIZADOR</h2>
 
-    <!-- Pantalla de la Radio (Usamos [ngClass] para evitar errores de compilación) -->
+    <h2 class="text-white text-center text-xl uppercase mb-6 tracking-widest">
+      SINTONIZADOR
+    </h2>
+
+    <!-- Pantalla -->
     <div [ngClass]="pantallaClasses">
 
-      <!-- Estática/Ruido (Atributos separados para evitar errores de navegador) -->
-      <div class="absolute inset-0 z-10 pointer-events-none bg-cover"
-           [style.opacity]="opacidadEstatica"
-           style="background-image: url('media.giphy.com')">
+      <!-- Estática -->
+      <div
+        class="absolute inset-0 z-10 pointer-events-none bg-cover"
+        [style.opacity]="opacidadEstatica"
+        style="background-image: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif')">
       </div>
-      <!-- Fin Estática/Ruido -->
 
-      <!-- Contenido de la pantalla -->
-      <div class="flex flex-col justify-center items-center h-full text-amber-500 font-mono">
+      <!-- Contenido -->
+      <div class="flex flex-col justify-center items-center h-full font-mono text-amber-500">
+
         @if (isFlashing) {
-           <p class="text-sm">SEÑAL DECODIFICADA</p>
-           <!-- El número solo aparece cuando isFlashing es true -->
-           <div class="text-7xl mt-2 font-bold animate-pulse text-white">
-              1
-           </div>
+          <p class="text-sm">SEÑAL DECODIFICADA</p>
+          <div class="text-7xl mt-2 font-bold animate-pulse text-white">
+            1
+          </div>
         } @else {
           <p class="text-sm">{{ mensajePantalla }}</p>
           <div class="text-4xl mt-2">
-             ---
+            ---
           </div>
         }
+
       </div>
-      <!-- Fin Contenido de la pantalla -->
     </div>
-    <!-- Fin Pantalla de la Radio -->
 
-    <!-- Dial de Control (daisyUI Range) -->
-    <div class="w-full px-2">
-      <input type="range" min="88" max="108" step="0.1"
-             [(ngModel)]="frecuenciaActual"
-             (input)="comprobarSintonizacion()"
-             class="range range-warning range-lg w-full" />
+    <!-- Dial -->
+    <div class="w-full px-2 mt-6">
+      <input
+        type="range"
+        min="88"
+        max="108"
+        step="0.1"
+        [(ngModel)]="frecuenciaActual"
+        (input)="comprobarSintonizacion()"
+        class="range range-warning range-lg w-full"
+      />
 
-      <!-- Barra de progreso para el feedback visual -->
       @if (porcentajeSintonizado > 0 && !pruebaCompletada) {
-         <progress class="progress progress-warning w-full mt-4" [value]="porcentajeSintonizado" max="100"></progress>
+        <progress
+          class="progress progress-warning w-full mt-4"
+          [value]="porcentajeSintonizado"
+          max="100">
+        </progress>
       }
 
       <div class="flex justify-between w-full px-1 text-xs mt-2 text-gray-400">
-        <span>88MHz</span>
-        <!-- Muestra la frecuencia actual con estilo mono -->
-        <span class="text-white text-lg font-mono">{{ frecuenciaActual }} MHz</span>
-        <span>108MHz</span>
+        <span>88 MHz</span>
+        <span class="text-white text-lg font-mono">
+          {{ frecuenciaActual }} MHz
+        </span>
+        <span>108 MHz</span>
       </div>
     </div>
-    <!-- Fin Dial de Control -->
 
-    <!-- Botón de Siguiente Prueba -->
-    <!-- Asegúrate de que el botón de continuar quite el mute -->
+    <!-- Botón continuar -->
     <div class="mt-8">
       @if (pruebaCompletada) {
-        <button class="btn btn-warning btn-block shadow-md hover:shadow-lg transition-shadow"
-                routerLink="/tercera-prueba"
-                (click)=silenciarAudio()> <!-- Silencia el audio al continuar -->
+        <button
+          class="btn btn-warning btn-block shadow-md hover:shadow-lg transition-shadow"
+          routerLink="/tercera-prueba"
+          (click)="audioPlayerRef.nativeElement.pause()">
           He memorizado el código, continuar
         </button>
       } @else {
-        <button class="btn btn-warning btn-block btn-outline opacity-50" disabled>
+        <button
+          class="btn btn-warning btn-block btn-outline opacity-50"
+          disabled>
           Mueve el dial para encontrar la señal...
         </button>
       }
