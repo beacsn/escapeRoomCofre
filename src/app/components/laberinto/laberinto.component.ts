@@ -37,6 +37,7 @@ metaPos = { x: 13, y: 13 };        // salida esquina inferior derecha
 llavePos = { x: 7, y: 6 };         // llave en el camino medio
 
   haRecogidoLlave = false;
+  primeraLlave: boolean = false;
 
   visitado = signal<boolean[][]>([]);
   celdasErroneas = signal<boolean[][]>([]);
@@ -104,6 +105,7 @@ llavePos = { x: 7, y: 6 };         // llave en el camino medio
         // recoger llave
         if (!this.haRecogidoLlave && newX === this.llavePos.x && newY === this.llavePos.y) {
           this.haRecogidoLlave = true;
+          this.primeraLlave = true;
           alert("¡Has encontrado la llave maestra! Ahora busca la salida.");
         }
         // comprobar meta

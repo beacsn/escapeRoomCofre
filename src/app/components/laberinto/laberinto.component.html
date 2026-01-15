@@ -23,9 +23,11 @@
             </div>
           }
           <!-- 2. Celdas no visitadas (niebla) -->
-          @else if (!visitado()[filaIndex][columnaIndex]) {
-            <div class="w-8 h-8 bg-gray-900 border border-gray-700 opacity-90 transition-opacity duration-300"></div>
-          }
+         @else if (!visitado()[filaIndex][columnaIndex]
+          && !(primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex)) {
+          <div class="w-8 h-8 bg-gray-900 border border-gray-700 opacity-90 transition-opacity duration-300"></div>
+        }
+
           <!-- 3. Celdas normales visitadas -->
           @else {
             <div class="relative w-8 h-8 border border-gray-600"
@@ -35,9 +37,19 @@
                  }">
 
               <!-- Llave -->
-              @if (!haRecogidoLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex){
-                <div class="w-4 h-4 bg-yellow-400 rounded-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-md z-10"></div>
+            @if (primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex) {
+              @if (haRecogidoLlave) {
+                <div class="llave-wrapper">
+                  <span class="llave-encontrada">🗝️</span>
+                </div>
+              } @else {
+                <div class="llave-wrapper">
+                  <span class="llave-pendiente">🔑</span>
+                </div>
               }
+            }
+
+
               <!-- Meta / salida -->
               @if (metaPos.x === columnaIndex && metaPos.y === filaIndex && haRecogidoLlave){
                 <div class="w-full h-full flex items-center justify-center">

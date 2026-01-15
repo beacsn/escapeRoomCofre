@@ -3,3 +3,33 @@
   /* Utiliza una variable CSS para definir el número de columnas dinámicamente */
   grid-template-columns: repeat(var(--grid-cols), 1fr);
 }
+
+
+.llave-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.llave-pendiente {
+  font-size: 1.1rem;   /* más pequeña */
+  opacity: 0.75;
+}
+
+.llave-encontrada {
+  font-size: 1.15rem;  /* solo un pelín más grande */
+  animation: brillo 1.5s infinite alternate;
+}
+
+@keyframes brillo {
+  from {
+    filter: drop-shadow(0 0 2px gold);
+  }
+  to {
+    filter: drop-shadow(0 0 6px gold);
+  }
+}
