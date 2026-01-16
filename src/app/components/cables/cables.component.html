@@ -1,0 +1,69 @@
+<div class="flex justify-center items-center min-h-screen bg-base-200">
+
+  <!-- CAJA DE LA BOMBA -->
+  <div class="bg-neutral text-neutral-content p-6 rounded-xl shadow-2xl w-96 relative">
+
+    <!-- TÍTULO ESTILO PELÍCULA -->
+    <h2 class="text-center text-xl font-mono tracking-widest text-warning mb-4">
+      SISTEMA DE DESACTIVACIÓN
+    </h2>
+
+    <!-- PANEL ATORNILLADO (DAISYUI) -->
+    <div class="mockup-browser border border-base-300 bg-base-100">
+      <div class="mockup-browser-toolbar">
+        <div class="input">PANEL DE CONTROL</div>
+      </div>
+
+      <div class="p-4 bg-base-200 relative">
+
+        <!-- INDICADOR DE ESTADO -->
+        <div class="text-center mb-4 font-mono">
+          <span *ngIf="!completado && !error">CORTA LOS CABLES EN EL ORDEN CORRECTO</span>
+          <span *ngIf="error" class="text-error animate-pulse">¡ERROR! REINICIANDO...</span>
+          <span *ngIf="completado" class="text-success animate-pulse">¡BOMBA DESACTIVADA!</span>
+        </div>
+
+        <!-- CABLES DENTRO DEL PANEL -->
+        <div class="flex flex-col gap-3">
+
+         <button
+          class="btn w-full"
+          [ngClass]="estaCortado('rojo') ? 'btn-disabled' : 'btn-error'"
+          (click)="cortarCable('rojo')">
+          🔴 Cable Rojo
+        </button>
+
+        <button
+          class="btn w-full"
+          [ngClass]="estaCortado('azul') ? 'btn-disabled' : '!bg-blue-600 !border-blue-600 !text-white'"
+          (click)="cortarCable('azul')">
+          🔵 Cable Azul
+        </button>
+
+        <button
+          class="btn w-full"
+          [ngClass]="estaCortado('verde') ? 'btn-disabled' : 'btn-success'"
+          (click)="cortarCable('verde')">
+          🟢 Cable Verde
+        </button>
+
+        <button
+          class="btn w-full"
+          [ngClass]="estaCortado('amarillo') ? 'btn-disabled' : '!bg-yellow-400 !border-yellow-400 !text-black'"
+          (click)="cortarCable('amarillo')">
+          🟡 Cable Amarillo
+        </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EFECTO VISUAL DE CABLES QUE ENTRAN A LA CAJA -->
+    <div class="absolute -left-4 top-1/3 flex flex-col gap-2">
+      <div class="w-6 h-1 bg-red-600"></div>
+      <div class="w-6 h-1 bg-blue-600"></div>
+      <div class="w-6 h-1 bg-green-600"></div>
+      <div class="w-6 h-1 bg-yellow-400"></div>
+    </div>
+
+  </div>
+</div>
