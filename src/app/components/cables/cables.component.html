@@ -1,4 +1,4 @@
-<div class="flex justify-center items-center min-h-screen bg-base-200">
+<div class="flex justify-center items-center min-h-screen bg-base-200 p-4">
 
   <!-- CAJA DE LA BOMBA -->
   <div class="bg-neutral text-neutral-content p-6 rounded-xl shadow-2xl w-96 relative">
@@ -7,6 +7,11 @@
     <h2 class="text-center text-xl font-mono tracking-widest text-warning mb-4">
       SISTEMA DE DESACTIVACIÓN
     </h2>
+
+    <!-- TEMPORIZADOR -->
+    <div class="text-center text-xl font-mono mb-4">
+      <span [class.text-error]="tiempo <= 10">{{ tiempo }} s</span>
+    </div>
 
     <!-- PANEL ATORNILLADO (DAISYUI) -->
     <div class="mockup-browser border border-base-300 bg-base-100">
@@ -17,42 +22,61 @@
       <div class="p-4 bg-base-200 relative">
 
         <!-- INDICADOR DE ESTADO -->
-        <div class="text-center mb-4 font-mono">
+        <div class="text-center mb-2 font-mono">
           <span *ngIf="!completado && !error">CORTA LOS CABLES EN EL ORDEN CORRECTO</span>
           <span *ngIf="error" class="text-error animate-pulse">¡ERROR! REINICIANDO...</span>
           <span *ngIf="completado" class="text-success animate-pulse">¡BOMBA DESACTIVADA!</span>
         </div>
 
+        <!-- LEDS DE PROGRESO CINEMATOGRÁFICOS -->
+        <div class="flex justify-center gap-2 mb-4">
+          <div *ngFor="let led of leds"
+               class="w-5 h-5 rounded-full border transition-all duration-300"
+               [ngClass]="{
+                 'bg-yellow-400 border-yellow-400 animate-pulse': led.animando,
+                 'bg-green-500 border-green-500': led.colorFinal === 'success',
+                 'bg-red-500 border-red-500': led.colorFinal === 'error',
+                 'bg-yellow-400 border-yellow-400': led.encendido && !led.animando && !led.colorFinal,
+                 'bg-gray-400 border-gray-400': !led.encendido && !led.animando && !led.colorFinal
+               }">
+          </div>
+        </div>
+
         <!-- CABLES DENTRO DEL PANEL -->
         <div class="flex flex-col gap-3">
 
-         <button
-          class="btn w-full"
-          [ngClass]="estaCortado('rojo') ? 'btn-disabled' : 'btn-error'"
-          (click)="cortarCable('rojo')">
-          🔴 Cable Rojo
-        </button>
+          <!-- CABLE ROJO -->
+          <button
+            class="btn w-full"
+            [ngClass]="estaCortado('rojo') ? 'btn-disabled' : 'btn-error'"
+            (click)="cortarCable('rojo')">
+            🔴 Cable Rojo
+          </button>
 
-        <button
-          class="btn w-full"
-          [ngClass]="estaCortado('azul') ? 'btn-disabled' : '!bg-blue-600 !border-blue-600 !text-white'"
-          (click)="cortarCable('azul')">
-          🔵 Cable Azul
-        </button>
+          <!-- CABLE AZUL -->
+          <button
+            class="btn w-full"
+            [ngClass]="estaCortado('azul') ? 'btn-disabled' : '!bg-blue-600 !border-blue-600 !text-white'"
+            (click)="cortarCable('azul')">
+            🔵 Cable Azul
+          </button>
 
-        <button
-          class="btn w-full"
-          [ngClass]="estaCortado('verde') ? 'btn-disabled' : 'btn-success'"
-          (click)="cortarCable('verde')">
-          🟢 Cable Verde
-        </button>
+          <!-- CABLE VERDE -->
+          <button
+            class="btn w-full"
+            [ngClass]="estaCortado('verde') ? 'btn-disabled' : 'btn-success'"
+            (click)="cortarCable('verde')">
+            🟢 Cable Verde
+          </button>
 
-        <button
-          class="btn w-full"
-          [ngClass]="estaCortado('amarillo') ? 'btn-disabled' : '!bg-yellow-400 !border-yellow-400 !text-black'"
-          (click)="cortarCable('amarillo')">
-          🟡 Cable Amarillo
-        </button>
+          <!-- CABLE AMARILLO -->
+          <button
+            class="btn w-full"
+            [ngClass]="estaCortado('amarillo') ? 'btn-disabled' : '!bg-yellow-400 !border-yellow-400 !text-black'"
+            (click)="cortarCable('amarillo')">
+            🟡 Cable Amarillo
+          </button>
+
         </div>
       </div>
     </div>

@@ -131,3 +131,8 @@
     #222 20px
   );
 }
+
+/* Efecto de parpadeo suave cuando se enciende */
+.bg-yellow-400 {
+  transition: background-color 0.3s ease;
+}
