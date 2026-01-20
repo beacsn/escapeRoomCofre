@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 type ColorCable = 'rojo' | 'azul' | 'verde' | 'amarillo';
 
@@ -11,6 +12,8 @@ type ColorCable = 'rojo' | 'azul' | 'verde' | 'amarillo';
   styleUrl: './cables.component.css'
 })
 export class CablesComponent implements OnDestroy {
+
+  constructor(private router: Router) {}
 
   // ---- CONFIGURACIÓN DEL PUZZLE ----
   ordenCorrecto: ColorCable[] = ['azul', 'rojo', 'verde', 'amarillo'];
@@ -86,16 +89,25 @@ export class CablesComponent implements OnDestroy {
     const correcto =
       JSON.stringify(this.ordenJugador) === JSON.stringify(this.ordenCorrecto);
 
-    if (correcto) {
-      this.completado = true;
-      this.error = false;
+   if (correcto) {
+    this.completado = true;
+    this.error = false;
 
-      // Todos los LEDs a verde
-      this.leds = this.leds.map(() => 'verde');
+    // Todos los LEDs a verde
+    this.leds = this.leds.map(() => 'verde');
 
-      this.correctoAudio.play();
+    this.correctoAudio.play();
 
-    } else {
+    // ⛔ Detenemos el tic-tac por seguridad
+    this.tickAudio.pause();
+    clearInterval(this.intervaloTiempo);
+
+    // ✅ Navegar a /final tras ver el efecto cine
+    setTimeout(() => {
+      this.router.navigate(['/final']);
+    }, 2000);
+  }
+ else {
       this.error = true;
 
       // Todos los LEDs a rojo
