@@ -13,10 +13,11 @@ type ColorCable = 'rojo' | 'azul' | 'verde' | 'amarillo';
 })
 export class CablesComponent implements OnInit, OnDestroy {
 
-  // ---- CONFIGURACIÓN DEL PUZZLE ----
+  // ---- CONFIGURACIÓN ----
   ordenCorrecto: ColorCable[] = ['azul', 'rojo', 'verde', 'amarillo'];
 
-  // ---- ESTADO DEL JUEGO ----
+  // ---- ESTADO ----
+  iniciado = false;
   ordenJugador: ColorCable[] = [];
   cablesCortados: ColorCable[] = [];
   completado = false;
@@ -26,11 +27,10 @@ export class CablesComponent implements OnInit, OnDestroy {
   tiempo = 60;
   timerInterval: any;
 
-  // ---- SONIDO CONTINUO ----
+  // ---- AUDIO ----
   ticTacAudio!: HTMLAudioElement;
-  audioIniciado = false; // <-- CLAVE PARA EVITAR EL ERROR DEL NAVEGADOR
 
-  // ---- LEDS DE PROGRESO ----
+  // ---- LEDS ----
   leds: { encendido: boolean; animando: boolean; colorFinal?: 'success' | 'error' }[] = [
     { encendido: false, animando: false },
     { encendido: false, animando: false },
@@ -39,7 +39,6 @@ export class CablesComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit() {
-    // Solo cargamos el audio (NO lo reproducimos aún)
     this.ticTacAudio = new Audio('assets/audio/tictac.mp3');
     this.ticTacAudio.loop = true;
     this.ticTacAudio.volume = 0.5;
@@ -48,6 +47,13 @@ export class CablesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     clearInterval(this.timerInterval);
     this.ticTacAudio.pause();
+  }
+
+  // ====== NUEVO: INICIO CON BOTÓN ======
+  iniciarPrueba() {
+    this.iniciado = true;
+    this.ticTacAudio.play();
+    this.iniciarTemporizador();
   }
 
   iniciarTemporizador() {
@@ -62,20 +68,8 @@ export class CablesComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  // 🔥 NUEVO MÉTODO: arranca audio + timer solo tras interacción del usuario
-  iniciarAudioYTimerSiNoEstaIniciado() {
-    if (!this.audioIniciado) {
-      this.ticTacAudio.play();
-      this.iniciarTemporizador();
-      this.audioIniciado = true;
-    }
-  }
-
   cortarCable(color: ColorCable) {
     if (this.completado || this.cablesCortados.includes(color)) return;
-
-    // PRIMER CLIC DEL JUGADOR → ARRANCA TODO
-    this.iniciarAudioYTimerSiNoEstaIniciado();
 
     this.ordenJugador.push(color);
     this.cablesCortados.push(color);
@@ -108,11 +102,9 @@ export class CablesComponent implements OnInit, OnDestroy {
       this.error = false;
       clearInterval(this.timerInterval);
 
-      // Paramos tic-tac
       this.ticTacAudio.pause();
       this.ticTacAudio.currentTime = 0;
 
-      // LEDs verdes
       this.leds.forEach(led => {
         led.encendido = true;
         led.animando = false;
@@ -122,7 +114,6 @@ export class CablesComponent implements OnInit, OnDestroy {
       this.reproducirSonido('correcto');
 
     } else {
-      // LEDs rojos antes del reset
       this.leds.forEach(led => {
         led.encendido = true;
         led.animando = false;
@@ -137,7 +128,6 @@ export class CablesComponent implements OnInit, OnDestroy {
     this.error = true;
     clearInterval(this.timerInterval);
 
-    // Paramos tic-tac
     this.ticTacAudio.pause();
     this.ticTacAudio.currentTime = 0;
 
@@ -146,7 +136,7 @@ export class CablesComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.resetear();
       this.tiempo = 60;
-      this.audioIniciado = false; // <-- IMPORTANTE para poder volver a arrancar con el próximo clic
+      this.iniciado = false;
     }, 1500);
   }
 
@@ -168,18 +158,11 @@ export class CablesComponent implements OnInit, OnDestroy {
   }
 
   reproducirSonido(nombre: 'explosion' | 'correcto') {
-    let audio: HTMLAudioElement;
-
-    switch (nombre) {
-      case 'explosion':
-        audio = new Audio('assets/audio/explosion.mp3');
-        audio.play();
-        break;
-
-      case 'correcto':
-        audio = new Audio('assets/audio/correcto.mp3');
-        audio.play();
-        break;
-    }
+    const audio = new Audio(
+      nombre === 'explosion'
+        ? 'assets/audio/explosion.mp3'
+        : 'assets/audio/correcto.mp3'
+    );
+    audio.play();
   }
 }
