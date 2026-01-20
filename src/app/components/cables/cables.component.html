@@ -1,115 +1,130 @@
-<div class="flex justify-center items-center min-h-screen bg-base-200 p-4">
+<div class="flex justify-center items-center min-h-screen bg-base-200 relative"
+     [class.emergencia]="emergencia">
 
-  <div class="bg-neutral text-neutral-content p-6 rounded-xl shadow-2xl w-96 relative">
+  <!-- PANTALLA INICIAL -->
+  <div *ngIf="!juegoIniciado"
+       class="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
 
-    <!-- ====== PANTALLA INICIAL ====== -->
-    <div *ngIf="!iniciado" class="text-center">
+    <div class="bg-neutral text-neutral-content p-8 rounded-xl shadow-2xl text-center max-w-md">
+      <h2 class="text-2xl font-mono text-warning mb-4">PROTOCOLO DE DESACTIVACIÓN</h2>
 
-      <h2 class="text-xl font-mono tracking-widest text-warning mb-4">
-        ALERTA DEL SISTEMA
-      </h2>
-
-      <p class="mb-4 text-sm">
-        Has encontrado el panel de control de la bomba.<br><br>
-        Al pulsar <strong>INICIAR</strong> comenzará la cuenta atrás.<br><br>
-        Debes cortar los cables en el <strong>orden correcto</strong> para
-        desactivarla y obtener el último número del candado.<br><br>
-        Un solo error… y será demasiado tarde.
+      <p class="mb-6">
+        A continuación deberás cortar los cables en el orden correcto
+        para desactivar la bomba y obtener el último número del cofre.
+        Tienes tiempo limitado.
       </p>
 
-      <button class="btn btn-warning w-full"
-              (click)="iniciarPrueba()">
+      <button class="btn btn-warning btn-lg" (click)="iniciarPrueba()">
         INICIAR PRUEBA
       </button>
+    </div>
+  </div>
 
+  <!-- EFECTO CINE SOLO AL COMPLETAR -->
+  <div *ngIf="completado" class="cinema-overlay"></div>
+  <div *ngIf="completado" class="cinema-bar-top"></div>
+  <div *ngIf="completado" class="cinema-bar-bottom"></div>
+  <div *ngIf="completado" class="cinema-spotlight"></div>
+
+  <div *ngIf="completado"
+       class="fixed inset-0 flex flex-col items-center justify-center z-50 text-center">
+
+    <h2 class="text-4xl font-mono text-success animate-pulse">
+      SISTEMA NEUTRALIZADO
+    </h2>
+
+    <div class="text-8xl font-bold mt-4 cinema-number text-success">
+      {{ codigoFinal }}
+    </div>
+  </div>
+
+  <!-- CAJA DE LA BOMBA -->
+  <div class="bg-neutral text-neutral-content p-6 rounded-xl shadow-2xl w-96 relative"
+       [class.shake]="temblar">
+
+    <h2 class="text-center text-xl font-mono tracking-widest text-warning mb-2">
+      SISTEMA DE DESACTIVACIÓN
+    </h2>
+
+    <!-- TEMPORIZADOR -->
+    <div class="text-center font-mono text-xl mb-3"
+         [class.text-error]="emergencia">
+      ⏱ {{ tiempo }}s
     </div>
 
-    <!-- ====== PANTALLA DE LA BOMBA ====== -->
-    <div *ngIf="iniciado">
-
-      <h2 class="text-center text-xl font-mono tracking-widest text-warning mb-4">
-        SISTEMA DE DESACTIVACIÓN
-      </h2>
-
-      <!-- TEMPORIZADOR -->
-      <div class="text-center text-xl font-mono mb-4">
-        <span [class.text-error]="tiempo <= 10">{{ tiempo }} s</span>
+    <!-- LEDs DE PROGRESO -->
+    <div class="flex justify-center gap-2 mb-4">
+      <div *ngFor="let led of leds"
+           class="w-5 h-5 rounded-full border border-gray-600"
+           [class.bg-gray-700]="led === 'apagado'"
+           [class.bg-yellow-400]="led === 'amarillo'"
+           [class.bg-green-500]="led === 'verde'"
+           [class.bg-red-600]="led === 'rojo'">
       </div>
-
-      <!-- PANEL -->
-      <div class="mockup-browser border border-base-300 bg-base-100">
-        <div class="mockup-browser-toolbar">
-          <div class="input">PANEL DE CONTROL</div>
-        </div>
-
-        <div class="p-4 bg-base-200 relative">
-
-          <!-- ESTADO -->
-          <div class="text-center mb-2 font-mono">
-            <span *ngIf="!completado && !error">
-              CORTA LOS CABLES EN EL ORDEN CORRECTO
-            </span>
-            <span *ngIf="error" class="text-error animate-pulse">
-              ¡ERROR! REINICIANDO...
-            </span>
-            <span *ngIf="completado" class="text-success animate-pulse">
-              ¡BOMBA DESACTIVADA!
-            </span>
-          </div>
-
-          <!-- LEDS -->
-          <div class="flex justify-center gap-2 mb-4">
-            <div *ngFor="let led of leds"
-                 class="w-5 h-5 rounded-full border transition-all duration-300"
-                 [ngClass]="{
-                   'bg-yellow-400 border-yellow-400 animate-pulse': led.animando,
-                   'bg-green-500 border-green-500': led.colorFinal === 'success',
-                   'bg-red-500 border-red-500': led.colorFinal === 'error',
-                   'bg-yellow-400 border-yellow-400': led.encendido && !led.animando && !led.colorFinal,
-                   'bg-gray-400 border-gray-400': !led.encendido && !led.animando && !led.colorFinal
-                 }">
-            </div>
-          </div>
-
-          <!-- CABLES -->
-          <div class="flex flex-col gap-3">
-
-            <button class="btn w-full"
-                    [ngClass]="estaCortado('rojo') ? 'btn-disabled' : 'btn-error'"
-                    (click)="cortarCable('rojo')">
-              🔴 Cable Rojo
-            </button>
-
-            <button class="btn w-full"
-                    [ngClass]="estaCortado('azul') ? 'btn-disabled' : '!bg-blue-600 !border-blue-600 !text-white'"
-                    (click)="cortarCable('azul')">
-              🔵 Cable Azul
-            </button>
-
-            <button class="btn w-full"
-                    [ngClass]="estaCortado('verde') ? 'btn-disabled' : 'btn-success'"
-                    (click)="cortarCable('verde')">
-              🟢 Cable Verde
-            </button>
-
-            <button class="btn w-full"
-                    [ngClass]="estaCortado('amarillo') ? 'btn-disabled' : '!bg-yellow-400 !border-yellow-400 !text-black'"
-                    (click)="cortarCable('amarillo')">
-              🟡 Cable Amarillo
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- DETALLE VISUAL DE CABLES -->
-      <div class="absolute -left-4 top-1/3 flex flex-col gap-2">
-        <div class="w-6 h-1 bg-red-600"></div>
-        <div class="w-6 h-1 bg-blue-600"></div>
-        <div class="w-6 h-1 bg-green-600"></div>
-        <div class="w-6 h-1 bg-yellow-400"></div>
-      </div>
-
     </div>
+
+    <!-- PANEL -->
+    <div class="mockup-browser border border-base-300 bg-base-100">
+      <div class="mockup-browser-toolbar">
+        <div class="input">PANEL DE CONTROL</div>
+      </div>
+
+      <div class="p-4 bg-base-200 relative">
+
+        <div class="text-center mb-4 font-mono">
+          <span *ngIf="!completado && !error">
+            CORTA LOS CABLES EN EL ORDEN CORRECTO
+          </span>
+          <span *ngIf="error" class="text-error animate-pulse">
+            ¡ERROR! REINICIANDO...
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-3">
+
+          <!-- 🔴 ROJO (RESPETA TU LÓGICA) -->
+          <button class="btn w-full"
+                  [ngClass]="estaCortado('rojo') ? 'btn-disabled' : 'btn-error'"
+                  (click)="cortarCable('rojo')">
+            🔴 Cable Rojo
+          </button>
+
+          <!-- 🔵 AZUL (TU VERSIÓN CORRECTA) -->
+          <button class="btn w-full"
+                  [ngClass]="estaCortado('azul')
+                    ? 'btn-disabled'
+                    : '!bg-blue-600 !border-blue-600 !text-white'"
+                  (click)="cortarCable('azul')">
+            🔵 Cable Azul
+          </button>
+
+          <!-- 🟢 VERDE -->
+          <button class="btn w-full"
+                  [ngClass]="estaCortado('verde') ? 'btn-disabled' : 'btn-success'"
+                  (click)="cortarCable('verde')">
+            🟢 Cable Verde
+          </button>
+
+          <!-- 🟡 AMARILLO (MISMA IDEA QUE AZUL) -->
+          <button class="btn w-full"
+                  [ngClass]="estaCortado('amarillo')
+                    ? 'btn-disabled'
+                    : '!bg-yellow-400 !border-yellow-400 !text-black'"
+                  (click)="cortarCable('amarillo')">
+            🟡 Cable Amarillo
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CABLES VISUALES -->
+    <div class="absolute -left-4 top-1/3 flex flex-col gap-2">
+      <div class="w-6 h-1 bg-red-600"></div>
+      <div class="w-6 h-1 bg-blue-600"></div>
+      <div class="w-6 h-1 bg-green-600"></div>
+      <div class="w-6 h-1 bg-yellow-400"></div>
+    </div>
+
   </div>
 </div>

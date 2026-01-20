@@ -1,168 +1,142 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 
 type ColorCable = 'rojo' | 'azul' | 'verde' | 'amarillo';
 
 @Component({
   selector: 'app-cables',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule],
   templateUrl: './cables.component.html',
-  styleUrls: ['./cables.component.css']
+  styleUrl: './cables.component.css'
 })
-export class CablesComponent implements OnInit, OnDestroy {
+export class CablesComponent implements OnDestroy {
 
-  // ---- CONFIGURACIÓN ----
+  // ---- CONFIGURACIÓN DEL PUZZLE ----
   ordenCorrecto: ColorCable[] = ['azul', 'rojo', 'verde', 'amarillo'];
+  codigoFinal = 0;
 
-  // ---- ESTADO ----
-  iniciado = false;
+  // ---- ESTADO DEL JUEGO ----
   ordenJugador: ColorCable[] = [];
   cablesCortados: ColorCable[] = [];
   completado = false;
   error = false;
 
-  // ---- TEMPORIZADOR ----
-  tiempo = 60;
-  timerInterval: any;
+  // ---- ESTADO DE INTERFAZ / INMERSIÓN ----
+  juegoIniciado = false;
+  tiempo = 25;
+  intervaloTiempo: any;
+  tickAudio = new Audio('assets/audio/tictac.mp3');
+  explosionAudio = new Audio('assets/audio/explosion.mp3');
+  correctoAudio = new Audio('assets/audio/correcto.mp3');
 
-  // ---- AUDIO ----
-  ticTacAudio!: HTMLAudioElement;
+  leds: ('apagado' | 'amarillo' | 'verde' | 'rojo')[] =
+    ['apagado', 'apagado', 'apagado', 'apagado'];
 
-  // ---- LEDS ----
-  leds: { encendido: boolean; animando: boolean; colorFinal?: 'success' | 'error' }[] = [
-    { encendido: false, animando: false },
-    { encendido: false, animando: false },
-    { encendido: false, animando: false },
-    { encendido: false, animando: false },
-  ];
+  // Para efecto visual de vibración
+  temblar = false;
 
-  ngOnInit() {
-    this.ticTacAudio = new Audio('assets/audio/tictac.mp3');
-    this.ticTacAudio.loop = true;
-    this.ticTacAudio.volume = 0.5;
-  }
+  // Para efecto de emergencia
+  emergencia = false;
 
-  ngOnDestroy() {
-    clearInterval(this.timerInterval);
-    this.ticTacAudio.pause();
-  }
-
-  // ====== NUEVO: INICIO CON BOTÓN ======
   iniciarPrueba() {
-    this.iniciado = true;
-    this.ticTacAudio.play();
+    this.juegoIniciado = true;
     this.iniciarTemporizador();
+    this.tickAudio.loop = true;
+    this.tickAudio.play();
   }
 
   iniciarTemporizador() {
-    this.timerInterval = setInterval(() => {
-      if (!this.completado && !this.error) {
-        this.tiempo--;
+    this.intervaloTiempo = setInterval(() => {
+      this.tiempo--;
 
-        if (this.tiempo <= 0) {
-          this.activarError();
-        }
+      // Modo emergencia cuando queden 8s
+      this.emergencia = this.tiempo <= 8;
+
+      if (this.tiempo <= 0) {
+        this.explotar();
       }
     }, 1000);
   }
 
   cortarCable(color: ColorCable) {
-    if (this.completado || this.cablesCortados.includes(color)) return;
+    if (this.completado || this.error || this.cablesCortados.includes(color)) {
+      return;
+    }
+
+    // Efecto vibración breve
+    this.temblar = true;
+    setTimeout(() => this.temblar = false, 250);
 
     this.ordenJugador.push(color);
     this.cablesCortados.push(color);
 
-    const index = this.ordenJugador.length - 1;
-    this.animarLED(index);
+    // Encender LED de progreso en amarillo
+    this.leds[this.ordenJugador.length - 1] = 'amarillo';
 
     if (this.ordenJugador.length === this.ordenCorrecto.length) {
       this.comprobarOrden();
     }
   }
 
-  animarLED(index: number) {
-    if (index < 0 || index >= this.leds.length) return;
-
-    this.leds[index].animando = true;
-
-    setTimeout(() => {
-      this.leds[index].animando = false;
-      this.leds[index].encendido = true;
-    }, 400);
-  }
-
   comprobarOrden() {
+    clearInterval(this.intervaloTiempo);
+    this.tickAudio.pause();
+
     const correcto =
       JSON.stringify(this.ordenJugador) === JSON.stringify(this.ordenCorrecto);
 
     if (correcto) {
       this.completado = true;
       this.error = false;
-      clearInterval(this.timerInterval);
 
-      this.ticTacAudio.pause();
-      this.ticTacAudio.currentTime = 0;
+      // Todos los LEDs a verde
+      this.leds = this.leds.map(() => 'verde');
 
-      this.leds.forEach(led => {
-        led.encendido = true;
-        led.animando = false;
-        led.colorFinal = 'success';
-      });
-
-      this.reproducirSonido('correcto');
+      this.correctoAudio.play();
 
     } else {
-      this.leds.forEach(led => {
-        led.encendido = true;
-        led.animando = false;
-        led.colorFinal = 'error';
-      });
+      this.error = true;
 
-      this.activarError();
+      // Todos los LEDs a rojo
+      this.leds = this.leds.map(() => 'rojo');
+
+      this.explosionAudio.play();
+
+      setTimeout(() => {
+        this.resetear();
+      }, 1800);
     }
   }
 
-  activarError() {
+  explotar() {
+    clearInterval(this.intervaloTiempo);
+    this.tickAudio.pause();
+    this.explosionAudio.play();
     this.error = true;
-    clearInterval(this.timerInterval);
 
-    this.ticTacAudio.pause();
-    this.ticTacAudio.currentTime = 0;
-
-    this.reproducirSonido('explosion');
+    // LEDs rojos al explotar
+    this.leds = this.leds.map(() => 'rojo');
 
     setTimeout(() => {
       this.resetear();
-      this.tiempo = 60;
-      this.iniciado = false;
-    }, 1500);
+    }, 1800);
   }
 
   resetear() {
     this.ordenJugador = [];
     this.cablesCortados = [];
+    this.leds = ['apagado', 'apagado', 'apagado', 'apagado'];
+    this.tiempo = 25;
     this.error = false;
-    this.completado = false;
-
-    this.leds.forEach(led => {
-      led.encendido = false;
-      led.animando = false;
-      delete led.colorFinal;
-    });
+    this.emergencia = false;
   }
 
   estaCortado(color: ColorCable): boolean {
     return this.cablesCortados.includes(color);
   }
 
-  reproducirSonido(nombre: 'explosion' | 'correcto') {
-    const audio = new Audio(
-      nombre === 'explosion'
-        ? 'assets/audio/explosion.mp3'
-        : 'assets/audio/correcto.mp3'
-    );
-    audio.play();
+  ngOnDestroy() {
+    clearInterval(this.intervaloTiempo);
   }
 }
