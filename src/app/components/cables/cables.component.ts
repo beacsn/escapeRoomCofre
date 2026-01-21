@@ -1,81 +1,97 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 type ColorCable = 'rojo' | 'azul' | 'verde' | 'amarillo';
+type EstadoLed = 'apagado' | 'amarillo' | 'verde' | 'rojo';
 
 @Component({
   selector: 'app-cables',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './cables.component.html',
-  styleUrl: './cables.component.css'
+  styleUrls: ['./cables.component.css']
 })
-export class CablesComponent implements OnDestroy {
+export class CablesComponent implements OnInit, OnDestroy {
 
-  constructor(private router: Router) {}
-
-  // ---- CONFIGURACIÓN DEL PUZZLE ----
+  // CONFIG
   ordenCorrecto: ColorCable[] = ['azul', 'rojo', 'verde', 'amarillo'];
   codigoFinal = 0;
 
-  // ---- ESTADO DEL JUEGO ----
-  ordenJugador: ColorCable[] = [];
-  cablesCortados: ColorCable[] = [];
+  // ESTADO GENERAL
+  juegoIniciado = false;
   completado = false;
   error = false;
 
-  // ---- ESTADO DE INTERFAZ / INMERSIÓN ----
-  juegoIniciado = false;
-  tiempo = 25;
-  intervaloTiempo: any;
-  tickAudio = new Audio('assets/audio/tictac.mp3');
-  explosionAudio = new Audio('assets/audio/explosion.mp3');
-  correctoAudio = new Audio('assets/audio/correcto.mp3');
-
-  leds: ('apagado' | 'amarillo' | 'verde' | 'rojo')[] =
-    ['apagado', 'apagado', 'apagado', 'apagado'];
-
-  // Para efecto visual de vibración
+  // EFECTOS VISUALES
+  emergencia = false;
   temblar = false;
 
-  // Para efecto de emergencia
-  emergencia = false;
+  // CABLES
+  ordenJugador: ColorCable[] = [];
+  cablesCortados: ColorCable[] = [];
 
+  // LEDS (HTML ANTIGUO)
+  leds: EstadoLed[] = ['apagado', 'apagado', 'apagado', 'apagado'];
+
+  // TIEMPO
+  tiempo = 60;
+  timerInterval: any;
+
+  // AUDIO
+  ticTacAudio!: HTMLAudioElement;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.ticTacAudio = new Audio('assets/audio/tictac.mp3');
+    this.ticTacAudio.loop = true;
+    this.ticTacAudio.volume = 0.5;
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.timerInterval);
+    this.ticTacAudio.pause();
+  }
+
+  // ===== INICIO =====
   iniciarPrueba() {
     this.juegoIniciado = true;
+    this.tiempo = 60;
+    this.ticTacAudio.currentTime = 0;
+    this.ticTacAudio.play();
     this.iniciarTemporizador();
-    this.tickAudio.loop = true;
-    this.tickAudio.play();
   }
 
   iniciarTemporizador() {
-    this.intervaloTiempo = setInterval(() => {
+    clearInterval(this.timerInterval);
+
+    this.timerInterval = setInterval(() => {
+      if (this.completado || this.error) return;
+
       this.tiempo--;
 
-      // Modo emergencia cuando queden 8s
-      this.emergencia = this.tiempo <= 8;
+      if (this.tiempo <= 10) {
+        this.emergencia = true;
+        this.temblar = true;
+      }
 
       if (this.tiempo <= 0) {
-        this.explotar();
+        this.activarError();
       }
     }, 1000);
   }
 
+  // ===== CABLES =====
   cortarCable(color: ColorCable) {
-    if (this.completado || this.error || this.cablesCortados.includes(color)) {
-      return;
-    }
+    if (this.completado || this.error) return;
+    if (this.cablesCortados.includes(color)) return;
 
-    // Efecto vibración breve
-    this.temblar = true;
-    setTimeout(() => this.temblar = false, 250);
-
-    this.ordenJugador.push(color);
     this.cablesCortados.push(color);
+    this.ordenJugador.push(color);
 
-    // Encender LED de progreso en amarillo
-    this.leds[this.ordenJugador.length - 1] = 'amarillo';
+    const index = this.ordenJugador.length - 1;
+    this.leds[index] = 'amarillo';
 
     if (this.ordenJugador.length === this.ordenCorrecto.length) {
       this.comprobarOrden();
@@ -83,72 +99,69 @@ export class CablesComponent implements OnDestroy {
   }
 
   comprobarOrden() {
-    clearInterval(this.intervaloTiempo);
-    this.tickAudio.pause();
-
     const correcto =
       JSON.stringify(this.ordenJugador) === JSON.stringify(this.ordenCorrecto);
 
-   if (correcto) {
-    this.completado = true;
-    this.error = false;
+    clearInterval(this.timerInterval);
+    this.ticTacAudio.pause();
+    this.ticTacAudio.currentTime = 0;
 
-    // Todos los LEDs a verde
-    this.leds = this.leds.map(() => 'verde');
-
-    this.correctoAudio.play();
-
-    // ⛔ Detenemos el tic-tac por seguridad
-    this.tickAudio.pause();
-    clearInterval(this.intervaloTiempo);
-
-    // ✅ Navegar a /final tras ver el efecto cine
-    setTimeout(() => {
-      this.router.navigate(['/final']);
-    }, 2000);
-  }
- else {
-      this.error = true;
-
-      // Todos los LEDs a rojo
-      this.leds = this.leds.map(() => 'rojo');
-
-      this.explosionAudio.play();
+    if (correcto) {
+      this.completado = true;
+      this.leds = this.leds.map(() => 'verde');
+      this.reproducirSonido('correcto');
 
       setTimeout(() => {
-        this.resetear();
-      }, 1800);
+        this.router.navigate(['/final']);
+      }, 3000);
+
+    } else {
+      this.leds = this.leds.map(() => 'rojo');
+      this.activarError();
     }
   }
 
-  explotar() {
-    clearInterval(this.intervaloTiempo);
-    this.tickAudio.pause();
-    this.explosionAudio.play();
+  // ===== ERROR =====
+  activarError() {
     this.error = true;
+    this.emergencia = true;
+    this.temblar = true;
 
-    // LEDs rojos al explotar
-    this.leds = this.leds.map(() => 'rojo');
+    clearInterval(this.timerInterval);
+    this.ticTacAudio.pause();
+    this.ticTacAudio.currentTime = 0;
+
+    this.reproducirSonido('explosion');
 
     setTimeout(() => {
       this.resetear();
-    }, 1800);
+    }, 2000);
   }
 
   resetear() {
     this.ordenJugador = [];
     this.cablesCortados = [];
     this.leds = ['apagado', 'apagado', 'apagado', 'apagado'];
-    this.tiempo = 25;
+
     this.error = false;
+    this.completado = false;
     this.emergencia = false;
+    this.temblar = false;
+
+    this.juegoIniciado = false;
   }
 
+  // ===== UTILS =====
   estaCortado(color: ColorCable): boolean {
     return this.cablesCortados.includes(color);
   }
 
-  ngOnDestroy() {
-    clearInterval(this.intervaloTiempo);
+  reproducirSonido(tipo: 'explosion' | 'correcto') {
+    const audio = new Audio(
+      tipo === 'explosion'
+        ? 'assets/audio/explosion.mp3'
+        : 'assets/audio/correcto.mp3'
+    );
+    audio.play();
   }
 }
