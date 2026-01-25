@@ -58,22 +58,44 @@ llavePos = { x: 7, y: 6 };         // llave en el camino medio
     this.haRecogidoLlave = false;
   }
 
-  @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
+
+  moverDireccion(direccion: 'up' | 'down' | 'left' | 'right') {
     let newX = this.jugadorPos.x;
     let newY = this.jugadorPos.y;
 
-    switch(event.key) {
-      case 'ArrowUp': newY--; break;
-      case 'ArrowDown': newY++; break;
-      case 'ArrowLeft': newX--; break;
-      case 'ArrowRight': newX++; break;
-      default: return;
+    switch (direccion) {
+      case 'up': newY--; break;
+      case 'down': newY++; break;
+      case 'left': newX--; break;
+      case 'right': newX++; break;
     }
 
-    event.preventDefault();
     this.movePlayer(newX, newY);
   }
+
+
+@HostListener('window:keydown', ['$event'])
+handleKeyDown(event: KeyboardEvent) {
+  switch (event.key) {
+    case 'ArrowUp':
+      event.preventDefault();
+      this.moverDireccion('up');
+      break;
+    case 'ArrowDown':
+      event.preventDefault();
+      this.moverDireccion('down');
+      break;
+    case 'ArrowLeft':
+      event.preventDefault();
+      this.moverDireccion('left');
+      break;
+    case 'ArrowRight':
+      event.preventDefault();
+      this.moverDireccion('right');
+      break;
+  }
+}
+
 
   movePlayer(newX: number, newY: number) {
     if (newY < 0 || newY >= this.laberinto.length || newX < 0 || newX >= this.laberinto[0].length) return;

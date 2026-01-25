@@ -71,4 +71,14 @@
       }
     </div>
   </div>
+  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:hidden">
+    <button class="btn btn-circle" (click)="moverDireccion('up')">⬆</button>
+
+    <div class="flex gap-2">
+      <button class="btn btn-circle" (click)="moverDireccion('left')">⬅</button>
+      <button class="btn btn-circle" (click)="moverDireccion('down')">⬇</button>
+      <button class="btn btn-circle" (click)="moverDireccion('right')">➡</button>
+    </div>
+  </div>
+
 </div>
