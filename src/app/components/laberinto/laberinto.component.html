@@ -1,6 +1,6 @@
-<div class="flex justify-center items-center h-screen bg-gray-900">
+<div class="flex justify-center items-center min-h-screen bg-gray-900 p-2">
 
-  <div class="relative">
+  <div class="relative w-full max-w-[90vw]"> <!-- contenedor responsive -->
 
     <!-- Contenedor superior: SALIDA y Reiniciar -->
     <div class="absolute -top-12 left-0 right-0 flex justify-between items-center px-2">
@@ -9,61 +9,62 @@
     </div>
 
     <!-- Cuadrícula del laberinto -->
-    <div class="grid" [style.--grid-cols]="laberinto.length">
+    <div class="grid w-full" [style.gridTemplateColumns]="'repeat(' + laberinto.length + ', minmax(0, 1fr))'">
       @for (row of laberinto; track $index; let filaIndex = $index) {
         @for (cell of row; track $index; let columnaIndex = $index) {
 
           <!-- 1. Celda permanentemente errónea (trampa roja) -->
           @if (celdasErroneas()[filaIndex][columnaIndex]) {
-            <div class="relative w-8 h-8 bg-red-900 border border-red-600 flex items-center justify-center animate-pulse">
-              <span class="text-error text-2xl">☠️</span>
+            <div class="relative aspect-square w-full bg-red-900 border border-red-600 flex items-center justify-center animate-pulse overflow-hidden">
+              <span class="text-[4vw] md:text-2xl">☠️</span>
               @if (jugadorPos.x === columnaIndex && jugadorPos.y === filaIndex) {
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl shadow-lg">🦖</div>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[5vw] md:text-2xl shadow-lg">🦖</div>
               }
             </div>
           }
+
           <!-- 2. Celdas no visitadas (niebla) -->
-         @else if (!visitado()[filaIndex][columnaIndex]
-          && !(primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex)) {
-          <div class="w-8 h-8 bg-gray-900 border border-gray-700 opacity-90 transition-opacity duration-300"></div>
-        }
+          @else if (!visitado()[filaIndex][columnaIndex]
+            && !(primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex)) {
+            <div class="aspect-square w-full bg-gray-900 border border-gray-700 opacity-90 transition-opacity duration-300"></div>
+          }
 
           <!-- 3. Celdas normales visitadas -->
           @else {
-            <div class="relative w-8 h-8 border border-gray-600"
+            <div class="relative aspect-square w-full border border-gray-600"
                  [ngClass]="{
                    'bg-gray-700': cell === 1,
                    'bg-gray-800': cell === 0 || cell === TIPO_TRAMPA
                  }">
 
               <!-- Llave -->
-            @if (primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex) {
-              @if (haRecogidoLlave) {
-                <div class="llave-wrapper">
-                  <span class="llave-encontrada">🗝️</span>
-                </div>
-              } @else {
-                <div class="llave-wrapper">
-                  <span class="llave-pendiente">🔑</span>
-                </div>
+              @if (primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex) {
+                @if (haRecogidoLlave) {
+                  <div class="llave-wrapper text-[4vw] md:text-xl">
+                    <span class="llave-encontrada">🗝️</span>
+                  </div>
+                } @else {
+                  <div class="llave-wrapper text-[4vw] md:text-xl">
+                    <span class="llave-pendiente">🔑</span>
+                  </div>
+                }
               }
-            }
-
 
               <!-- Meta / salida -->
               @if (metaPos.x === columnaIndex && metaPos.y === filaIndex && haRecogidoLlave){
-                <div class="w-full h-full flex items-center justify-center">
-                  <span class="badge badge-success badge-sm text-xs font-bold">META</span>
+                <div class="w-full h-full flex items-center justify-center text-[3vw] md:text-xs">
+                  <span class="badge badge-success badge-sm font-bold">META</span>
                 </div>
               }
               @else if (metaPos.x === columnaIndex && metaPos.y === filaIndex && !haRecogidoLlave){
-                <div class="w-full h-full flex items-center justify-center">
-                  <span class="badge badge-warning badge-sm text-xs font-bold">🔒</span>
+                <div class="w-full h-full flex items-center justify-center text-[3vw] md:text-xs">
+                  <span class="badge badge-warning badge-sm font-bold">🔒</span>
                 </div>
               }
+
               <!-- Jugador -->
               @if (jugadorPos.x === columnaIndex && jugadorPos.y === filaIndex){
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl shadow-lg">🦖</div>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[5vw] md:text-2xl shadow-lg">🦖</div>
               }
             </div>
           }
@@ -71,9 +72,10 @@
       }
     </div>
   </div>
+
+  <!-- Controles móviles -->
   <div class="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:hidden">
     <button class="btn btn-circle" (click)="moverDireccion('up')">⬆</button>
-
     <div class="flex gap-2">
       <button class="btn btn-circle" (click)="moverDireccion('left')">⬅</button>
       <button class="btn btn-circle" (click)="moverDireccion('down')">⬇</button>
