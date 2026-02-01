@@ -1,14 +1,13 @@
-<div class="flex justify-center items-center min-h-screen bg-gray-900 p-2">
+<div class="flex flex-col items-center min-h-screen bg-gray-900 p-2">
 
-  <div class="relative w-full max-w-[90vw]"> <!-- contenedor responsive -->
+  <!-- Contenedor superior: SALIDA y Reiniciar -->
+  <div class="w-full max-w-[90vw] md:max-w-[600px] flex justify-between items-center mb-4">
+    <div class="badge badge-lg badge-success text-white font-bold shadow-xl">SALIDA</div>
+    <button class="btn btn-error btn-sm" (click)="resetGame()">Reiniciar</button>
+  </div>
 
-    <!-- Contenedor superior: SALIDA y Reiniciar -->
-    <div class="absolute -top-12 left-0 right-0 flex justify-between items-center px-2">
-      <div class="badge badge-lg badge-success text-white font-bold shadow-xl">SALIDA</div>
-      <button class="btn btn-error btn-sm" (click)="resetGame()">Reiniciar</button>
-    </div>
-
-    <!-- Cuadrícula del laberinto -->
+  <!-- Contenedor del laberinto -->
+  <div class="w-full max-w-[90vw] md:max-w-[600px]">
     <div class="grid w-full" [style.gridTemplateColumns]="'repeat(' + laberinto.length + ', minmax(0, 1fr))'">
       @for (row of laberinto; track $index; let filaIndex = $index) {
         @for (cell of row; track $index; let columnaIndex = $index) {
