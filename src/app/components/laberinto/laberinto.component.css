@@ -2,6 +2,8 @@
   display: grid;
   /* Utiliza una variable CSS para definir el número de columnas dinámicamente */
   grid-template-columns: repeat(var(--grid-cols), 1fr);
+   gap: 1px;
+   transition: opacity 0.2s ease;
 }
 
 
@@ -32,4 +34,67 @@
   to {
     filter: drop-shadow(0 0 6px gold);
   }
+}
+
+
+/* Hover suave para celdas del laberinto (solo visual) */
+.grid > div {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-image: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.05),
+    transparent 60%
+  );
+}
+
+/* Hover solo en dispositivos con ratón */
+@media (hover: hover) {
+  .grid > div:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+}
+
+@keyframes dangerGlow {
+  from {
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
+  }
+  to {
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.7);
+  }
+}
+
+.bg-red-900.animate-pulse {
+  animation: dangerGlow 1.2s infinite alternate;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.player-breathe {
+  animation: breathe 1.8s infinite ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 0); }
+  50% { transform: translate(2px, 0); }
+  75% { transform: translate(-2px, 0); }
+}
+
+.trampa-activada {
+  animation: shake 0.3s ease-in-out 1, dangerGlow 1s infinite alternate;
+}
+
+@keyframes victoryGlow {
+  0% { filter: drop-shadow(0 0 4px gold); }
+  50% { filter: drop-shadow(0 0 12px gold); }
+  100% { filter: drop-shadow(0 0 4px gold); }
+}
+
+.meta-victoria {
+  animation: victoryGlow 1.5s infinite alternate;
 }

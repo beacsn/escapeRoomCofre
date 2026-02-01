@@ -1,9 +1,24 @@
-<div class="flex flex-col items-center min-h-screen bg-gray-900 p-2">
+<div class="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-2">
+
+
 
   <!-- Contenedor superior: SALIDA y Reiniciar -->
-  <div class="w-full max-w-[90vw] md:max-w-[600px] flex justify-between items-center mb-4">
-    <div class="badge badge-lg badge-success text-white font-bold shadow-xl">SALIDA</div>
-    <button class="btn btn-error btn-sm" (click)="resetGame()">Reiniciar</button>
+  <div class="w-full max-w-[90vw] md:max-w-[600px]
+            flex justify-between items-center mb-4
+            bg-gray-800/80 backdrop-blur-md
+            rounded-xl px-3 py-2 shadow-lg">
+    <div class="badge badge-lg badge-success text-white font-bold shadow-xl
+            tracking-wide animate-pulse">
+        SALIDA
+      </div>
+
+    <button class="btn btn-error btn-sm shadow-md
+               hover:scale-105 active:scale-95
+               transition-transform duration-150"
+            (click)="resetGame()">
+      Reiniciar
+    </button>
+
   </div>
 
   <!-- Contenedor del laberinto -->
@@ -14,10 +29,16 @@
 
           <!-- 1. Celda permanentemente errónea (trampa roja) -->
           @if (celdasErroneas()[filaIndex][columnaIndex]) {
-            <div class="relative aspect-square w-full bg-red-900 border border-red-600 flex items-center justify-center animate-pulse overflow-hidden">
+            <div class="relative aspect-square w-full bg-red-900 border border-red-600 flex items-center justify-center
+              animate-pulse overflow-hidden shadow-md rounded-md trampa-activada">
+
               <span class="text-[4vw] md:text-2xl">☠️</span>
               @if (jugadorPos.x === columnaIndex && jugadorPos.y === filaIndex) {
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[5vw] md:text-2xl shadow-lg">🦖</div>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[5vw] md:text-2xl
+                  shadow-2xl player-breathe">
+                  🦖
+                </div>
+
               }
             </div>
           }
@@ -30,7 +51,7 @@
 
           <!-- 3. Celdas normales visitadas -->
           @else {
-            <div class="relative aspect-square w-full border border-gray-600"
+            <div class="relative aspect-square w-full border border-gray-600 shadow-sm rounded-md"
                  [ngClass]="{
                    'bg-gray-700': cell === 1,
                    'bg-gray-800': cell === 0 || cell === TIPO_TRAMPA
@@ -39,31 +60,38 @@
               <!-- Llave -->
               @if (primeraLlave && llavePos.x === columnaIndex && llavePos.y === filaIndex) {
                 @if (haRecogidoLlave) {
-                  <div class="llave-wrapper text-[4vw] md:text-xl">
-                    <span class="llave-encontrada">🗝️</span>
+                  <div class="llave-wrapper text-[4vw] md:text-xl shadow-lg">
+                    <span class="animate-bounce">
+                      <span class="llave-encontrada">🗝️</span>
+                    </span>
                   </div>
                 } @else {
-                  <div class="llave-wrapper text-[4vw] md:text-xl">
-                    <span class="llave-pendiente">🔑</span>
+                  <div class="llave-wrapper text-[4vw] md:text-xl shadow-lg">
+                    <span class="animate-bounce">
+                      <span class="llave-pendiente">🔑</span>
+                    </span>
                   </div>
+
                 }
               }
 
               <!-- Meta / salida -->
               @if (metaPos.x === columnaIndex && metaPos.y === filaIndex && haRecogidoLlave){
                 <div class="w-full h-full flex items-center justify-center text-[3vw] md:text-xs">
-                  <span class="badge badge-success badge-sm font-bold">META</span>
+                  <span class="badge badge-success badge-sm font-bold shadow-md meta-victoria">
+                    META
+                  </span>
                 </div>
               }
               @else if (metaPos.x === columnaIndex && metaPos.y === filaIndex && !haRecogidoLlave){
                 <div class="w-full h-full flex items-center justify-center text-[3vw] md:text-xs">
-                  <span class="badge badge-warning badge-sm font-bold">🔒</span>
+                  <span class="badge badge-warning badge-sm font-bold animate-pulse">🔒</span>
                 </div>
               }
 
               <!-- Jugador -->
               @if (jugadorPos.x === columnaIndex && jugadorPos.y === filaIndex){
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[5vw] md:text-2xl shadow-lg">🦖</div>
+                <div class="player-breathe absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[5vw] md:text-2xl shadow-2xl">🦖</div>
               }
             </div>
           }
@@ -74,11 +102,11 @@
 
   <!-- Controles móviles -->
   <div class="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:hidden">
-    <button class="btn btn-circle" (click)="moverDireccion('up')">⬆</button>
+    <button class="btn btn-circle shadow-lg active:scale-95 transition-transform" (click)="moverDireccion('up')">⬆</button>
     <div class="flex gap-2">
-      <button class="btn btn-circle" (click)="moverDireccion('left')">⬅</button>
-      <button class="btn btn-circle" (click)="moverDireccion('down')">⬇</button>
-      <button class="btn btn-circle" (click)="moverDireccion('right')">➡</button>
+      <button class="btn btn-circle shadow-lg active:scale-95 transition-transform" (click)="moverDireccion('left')">⬅</button>
+      <button class="btn btn-circle shadow-lg active:scale-95 transition-transform" (click)="moverDireccion('down')">⬇</button>
+      <button class="btn btn-circle shadow-lg active:scale-95 transition-transform" (click)="moverDireccion('right')">➡</button>
     </div>
   </div>
 
