@@ -1,3 +1,37 @@
+<!-- PANTALLA INICIAL -->
+@if (!juegoIniciado) {
+  <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+
+    <div class="bg-neutral text-neutral-content
+                p-8 rounded-xl shadow-2xl
+                max-w-md text-center">
+
+      <h2 class="text-2xl font-mono text-warning mb-4">
+        CANAL INTERVENIDO
+      </h2>
+
+      <p class="text-sm leading-relaxed mb-6">
+        La señal está oculta entre interferencias.<br><br>
+
+        Deberás <strong>ajustar manualmente la frecuencia</strong>
+        hasta estabilizar la transmisión y obtener el siguiente número.<br><br>
+
+        <span class="text-error font-semibold">
+          Un ajuste impreciso romperá la sintonía.
+        </span>
+      </p>
+
+      <button
+        class="btn btn-warning btn-lg w-full"
+        (click)="iniciarRadio()">
+        INICIAR SINTONIZACIÓN
+      </button>
+
+    </div>
+  </div>
+}
+
+
 <!-- Audio de estática -->
 <audio #audioPlayer src="assets/audio/radio-static.mp3" loop></audio>
 
@@ -46,6 +80,7 @@
         [(ngModel)]="frecuenciaActual"
         (input)="comprobarSintonizacion()"
         class="range range-warning range-lg w-full"
+        [disabled]="!juegoIniciado"
       />
 
       @if (porcentajeSintonizado > 0 && !pruebaCompletada) {

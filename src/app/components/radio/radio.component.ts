@@ -40,6 +40,9 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
   private sintonizandoTimeout: any = null;
   private signalPlayed: boolean = false;
 
+  juegoIniciado: boolean = false;
+
+
   // ======================
   // AUDIO
   // ======================
@@ -101,6 +104,7 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
   // ======================
 
   comprobarSintonizacion(): void {
+     if (!this.juegoIniciado) return;
     this.unlockAudio();
 
     const distancia = Math.abs(
@@ -193,4 +197,9 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
     if (distancia < 0.5) return 'INTERFERENCIA BAJA';
     return 'BUSCANDO SEÑAL...';
   }
+
+  iniciarRadio(): void {
+    this.juegoIniciado = true;
+  }
+
 }
