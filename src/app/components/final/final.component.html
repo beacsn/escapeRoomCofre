@@ -28,31 +28,46 @@
 
 <!-- PANTALLA DE ÉXITO -->
 @if (cofreAbierto) {
-  <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+
+  <!-- Overlay oscuro -->
+  <div class="fixed inset-0 bg-black/80 z-50"></div>
+
+  <!-- Barras cinematográficas -->
+  <div class="fixed top-0 left-0 w-full h-16 bg-black z-50"></div>
+  <div class="fixed bottom-0 left-0 w-full h-16 bg-black z-50"></div>
+
+  <!-- Contenido central -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center text-center">
 
     <div class="bg-neutral text-neutral-content
                 p-10 rounded-xl shadow-2xl
-                text-center max-w-md">
+                max-w-md
+                animate-fade-in-out">
 
-      <h2 class="text-3xl font-mono text-success mb-4 animate-pulse">
+      <h2 class="text-3xl font-mono text-success mb-4 tracking-widest">
         COFRE ABIERTO
       </h2>
 
-      <div class="text-6xl mb-4">
+      <div class="text-7xl mb-4 animate-bounce">
         🎁
       </div>
 
-      <p class="text-sm leading-relaxed mb-6">
-        Has completado todas las pruebas.<br>
-        El cofre se abre ante ti.
+      <p class="text-sm leading-relaxed mb-6 opacity-90">
+        Has superado todas las pruebas.<br>
+        El sistema reconoce tu acceso.
       </p>
 
-      <p class="text-success font-mono tracking-widest">
+      <p class="text-success font-mono tracking-[0.3em] mb-6">
         MISIÓN COMPLETADA
       </p>
+
+      <button class="btn btn-success btn-wide" [routerLink]="['/felicidades']">
+        Continuar
+      </button>
 
     </div>
   </div>
 }
+
 
 

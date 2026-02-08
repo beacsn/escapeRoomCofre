@@ -1,6 +1,6 @@
 // src/app/components/final/final.component.ts
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Importa FormsModule para ngModel
 
@@ -9,7 +9,8 @@ import { FormsModule } from '@angular/forms'; // Importa FormsModule para ngMode
   templateUrl: './final.component.html',
   styleUrls: ['./final.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule] // Añade FormsModule aquí
+  imports: [CommonModule, FormsModule, RouterLink] // Añade FormsModule aquí
+ // Añade FormsModule aquí
 })
 export class FinalComponent {
   // Define el código secreto de tu candado físico
