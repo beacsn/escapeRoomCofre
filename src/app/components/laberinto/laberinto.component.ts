@@ -47,6 +47,12 @@ llavePos = { x: 7, y: 6 };         // llave en el camino medio
   private idCounter = 0;
   ultimaVictoriaId: number | null = null;
 
+  juegoIniciado = false;
+
+  iniciarLaberinto() {
+    this.juegoIniciado = true;
+  }
+
 
 
   constructor(private router: Router) {}
@@ -83,6 +89,7 @@ llavePos = { x: 7, y: 6 };         // llave en el camino medio
 
 @HostListener('window:keydown', ['$event'])
 handleKeyDown(event: KeyboardEvent) {
+  if (!this.juegoIniciado) return;
   switch (event.key) {
     case 'ArrowUp':
       event.preventDefault();
@@ -105,6 +112,7 @@ handleKeyDown(event: KeyboardEvent) {
 
 
   movePlayer(newX: number, newY: number) {
+    if (!this.juegoIniciado) return;
     if (newY < 0 || newY >= this.laberinto.length || newX < 0 || newX >= this.laberinto[0].length) return;
 
     const nextCellType = this.laberinto[newY][newX];

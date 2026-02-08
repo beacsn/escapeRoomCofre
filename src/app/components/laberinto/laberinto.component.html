@@ -1,5 +1,40 @@
 <div class="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-2">
 
+  <!-- PANTALLA INICIAL -->
+  @if (!juegoIniciado) {
+    <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+
+      <div class="bg-neutral text-neutral-content
+                  p-8 rounded-xl shadow-2xl
+                  max-w-md text-center">
+
+        <h2 class="text-2xl font-mono text-warning mb-4">
+          ACCESO AL LABERINTO
+        </h2>
+
+        <p class="text-sm leading-relaxed mb-6">
+          Has accedido a un sistema de seguridad antiguo.<br><br>
+
+          El laberinto oculta la <strong>llave maestra</strong> y la salida.<br>
+          Algunas celdas contienen trampas eléctricas.<br><br>
+
+          <span class="text-warning font-semibold">
+            Solo podrás escapar si encuentras la llave.
+          </span>
+        </p>
+
+        <button
+          class="btn btn-warning btn-lg w-full"
+          (click)="iniciarLaberinto()"
+        >
+          INICIAR EXPLORACIÓN
+        </button>
+
+      </div>
+    </div>
+  }
+
+
   <!-- Contenedor de notificaciones -->
   <div class="fixed top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
     @for (n of notificaciones(); track n.id) {
