@@ -1,5 +1,31 @@
 <div class="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-2">
 
+  <!-- Contenedor de notificaciones -->
+  <div class="fixed top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
+    @for (n of notificaciones(); track n.id) {
+      <div
+        class="text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+        [ngClass]="{
+          'bg-green-500': n.tipo === 'success',
+          'bg-red-500': n.tipo === 'error',
+          'bg-blue-500': n.tipo === 'info',
+          'animate-fade-in-out': n.id !== ultimaVictoriaId
+        }"
+      >
+
+        {{ n.mensaje }}
+
+        <!-- Mostrar botón Continuar solo para notificaciones de victoria -->
+        @if (n.tipo === 'success' && n.id === ultimaVictoriaId) {
+          <button class="ml-2 btn btn-xs btn-accent" routerLink="/radio">
+            Continuar
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+
 
 
   <!-- Contenedor superior: SALIDA y Reiniciar -->

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-laberinto',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './laberinto.component.html',
   styleUrls: ['./laberinto.component.css']
 })
@@ -41,6 +41,13 @@ llavePos = { x: 7, y: 6 };         // llave en el camino medio
 
   visitado = signal<boolean[][]>([]);
   celdasErroneas = signal<boolean[][]>([]);
+
+  // Lista de notificaciones visibles
+  notificaciones = signal<{ id: number, tipo: 'info' | 'error' | 'success', mensaje: string }[]>([]);
+  private idCounter = 0;
+  ultimaVictoriaId: number | null = null;
+
+
 
   constructor(private router: Router) {}
 
@@ -121,14 +128,16 @@ handleKeyDown(event: KeyboardEvent) {
           newMatrix[newY][newX] = true;
           return newMatrix;
         });
-        alert("¡ZAS! Descarga eléctrica. Vuelves al inicio.");
+        //alert("¡ZAS! Descarga eléctrica. Vuelves al inicio.");
+        this.showNotificacion("¡ZAS! Descarga eléctrica. Vuelves al inicio.", "error");
         this.resetGame();
       } else {
         // recoger llave
         if (!this.haRecogidoLlave && newX === this.llavePos.x && newY === this.llavePos.y) {
           this.haRecogidoLlave = true;
           this.primeraLlave = true;
-          alert("¡Has encontrado la llave maestra! Ahora busca la salida.");
+          //alert("¡Has encontrado la llave maestra! Ahora busca la salida.");
+           this.showNotificacion("¡Has encontrado la llave maestra! Ahora busca la salida.", "success");
         }
         // comprobar meta
         if (this.haRecogidoLlave && newX === this.metaPos.x && newY === this.metaPos.y) {
@@ -139,7 +148,23 @@ handleKeyDown(event: KeyboardEvent) {
   }
 
   onGameWin() {
-    alert("¡Has superado el laberinto y tienes la llave! El primer dígito es: 2");
-    this.router.navigate(['/radio']);
+    //this.showNotificacion("¡Has superado el laberinto y tienes la llave! El primer dígito es: 2", "success", 5000);
+    //this.router.navigate(['/radio']);
+    const id = this.idCounter++;
+    this.ultimaVictoriaId = id;
+    this.notificaciones.update(arr => [...arr, { id, tipo: 'success', mensaje: "¡Has superado el laberinto y tienes la llave! El primer dígito es: 2" }]);
   }
+
+  showNotificacion(mensaje: string, tipo: 'info' | 'error' | 'success' = 'info', duracion: number = 2500) {
+    const id = this.idCounter++;
+    this.notificaciones.update(arr => [...arr, { id, tipo, mensaje }]);
+
+    // quitar notificación automáticamente tras 'duracion'
+    setTimeout(() => {
+      this.notificaciones.update(arr => arr.filter(n => n.id !== id));
+    }, duracion);
+  }
+
+
+
 }
