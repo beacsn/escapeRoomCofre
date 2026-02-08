@@ -20,22 +20,26 @@ export class FinalComponent {
   digit2: string = '';
   digit3: string = '';
 
+  cofreAbierto: boolean = false;
+  codigoIncorrecto: boolean = false;
+
+
   constructor(private router: Router) {}
 
   checkCode() {
     const inputCode = `${this.digit1}${this.digit2}${this.digit3}`;
 
     if (inputCode === this.SECRET_CODE) {
-      alert("¡COFRE ABIERTO! 🎉🎁 ¡Felicidades!");
-      // Redirige a una página de "Feliz cumpleaños/aniversario" (necesitarías otra ruta/componente)
-      // this.router.navigate(['/felicidades']);
+      this.cofreAbierto = true;
+      this.codigoIncorrecto = false;
     } else {
-      alert("Código incorrecto. Inténtalo de nuevo.");
-      // Limpia los campos para facilitar un nuevo intento
+      this.codigoIncorrecto = true;
+
       this.digit1 = '';
       this.digit2 = '';
       this.digit3 = '';
     }
   }
+
 }
 
