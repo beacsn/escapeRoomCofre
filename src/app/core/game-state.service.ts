@@ -41,4 +41,16 @@ export class GameStateService {
       this.audio.pause();
     }
   }
+
+  muteAudio(): void {
+    this.audio.volume = 0;
+  }
+
+  unmuteAudio(): void {
+    if (this.audioEnabled()) {
+      this.audio.volume = 1;
+    }
+  }
+
+
 }

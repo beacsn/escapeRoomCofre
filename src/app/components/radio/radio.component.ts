@@ -8,6 +8,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { GameStateService } from '../../core/game-state.service';
 
 @Component({
   selector: 'app-radio',
@@ -16,6 +17,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './radio.component.html',
 })
 export class RadioComponent implements AfterViewInit, OnDestroy {
+
+ constructor(private game: GameStateService) {}
 
   // ======================
   // CONFIGURACIÓN GENERAL
@@ -61,6 +64,7 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
     // Audio de señal encontrada
     this.audioSignal = new Audio('assets/audio/signal-found.mp3');
     this.audioSignal.volume = 0.8;
+    this.game.muteAudio();
   }
 
   ngOnDestroy(): void {
@@ -71,6 +75,8 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
     if (this.audioPlayerRef?.nativeElement) {
       this.audioPlayerRef.nativeElement.pause();
     }
+
+     this.game.unmuteAudio();
   }
 
   // ======================
