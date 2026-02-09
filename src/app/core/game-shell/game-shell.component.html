@@ -1,0 +1,43 @@
+<div class="min-h-screen bg-base-200 relative">
+
+  <!-- ⏱️ CONTADOR GLOBAL -->
+  <div class="fixed top-4 right-4 z-50 flex gap-3">
+    <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content text-center">
+      <span class="countdown font-mono text-3xl">
+        <span [style.--value]="game.minutes"></span>
+      </span>
+      min
+    </div>
+
+    <div class="flex flex-col p-2 bg-neutral rounded-box text-neutral-content text-center">
+      <span class="countdown font-mono text-3xl">
+        <span [style.--value]="game.seconds"></span>
+      </span>
+      sec
+    </div>
+  </div>
+
+  <!-- 🔊 AUDIO -->
+  <label class="btn btn-circle swap swap-rotate fixed bottom-5 right-5 z-50">
+  <input
+    #audioToggle
+    type="checkbox"
+    [checked]="game.audioEnabled()"
+    (change)="game.toggleAudio(audioToggle.checked)"
+  />
+
+  <!-- Icono volumen ON -->
+  <svg class="swap-on fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+    <path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23Z"/>
+  </svg>
+
+  <!-- Icono volumen OFF -->
+  <svg class="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+    <path d="M3,9H7L12,4V20L7,15H3V9M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12Z"/>
+  </svg>
+</label>
+
+  <!-- AQUÍ SE CARGAN LAS PRUEBAS -->
+  <router-outlet></router-outlet>
+
+</div>
