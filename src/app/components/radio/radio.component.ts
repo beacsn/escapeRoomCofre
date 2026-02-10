@@ -52,7 +52,7 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
   // 👉 NUEVO: transición emocional
   mostrarTransicion: boolean = false;
   imagenPerro = PERRO_BASE64;
-  mensajePerro = 'Buen trabajo. Él también estaría orgulloso 🐾';
+  mensajePerro = 'BUEN TRABAJO. ÉL TAMBIÉN ESTARÍA ORGULLOSO 🐾';
 
   // ======================
   // AUDIO

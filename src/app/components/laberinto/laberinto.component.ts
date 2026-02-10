@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { PERRO_2_BASE_64 } from '../images.base64';// ajusta la ruta
+
 
 @Component({
   selector: 'app-laberinto',
@@ -48,6 +50,10 @@ llavePos = { x: 7, y: 6 };         // llave en el camino medio
   ultimaVictoriaId: number | null = null;
 
   juegoIniciado = false;
+
+  mostrarPerro = signal(false);
+  perroBase64 = PERRO_2_BASE_64;
+
 
   iniciarLaberinto() {
     this.juegoIniciado = true;
@@ -155,13 +161,32 @@ handleKeyDown(event: KeyboardEvent) {
     }
   }
 
-  onGameWin() {
+onGameWin() {
     //this.showNotificacion("¡Has superado el laberinto y tienes la llave! El primer dígito es: 2", "success", 5000);
     //this.router.navigate(['/radio']);
-    const id = this.idCounter++;
-    this.ultimaVictoriaId = id;
-    this.notificaciones.update(arr => [...arr, { id, tipo: 'success', mensaje: "¡Has superado el laberinto y tienes la llave! El primer dígito es: 2" }]);
-  }
+  const id = this.idCounter++;
+  this.ultimaVictoriaId = id;
+
+  this.notificaciones.update(arr => [
+    ...arr,
+    {
+      id,
+      tipo: 'success',
+      mensaje: "¡Has superado el laberinto y tienes la llave! El primer dígito es: 2"
+    }
+  ]);
+
+  // 👉 mostrar la imagen del perro
+  this.mostrarPerro.set(true);
+
+}
+
+continuar() {
+  this.mostrarPerro.set(false);
+  this.router.navigate(['/radio']); // siguiente prueba
+}
+
+
 
   showNotificacion(mensaje: string, tipo: 'info' | 'error' | 'success' = 'info', duracion: number = 2500) {
     const id = this.idCounter++;

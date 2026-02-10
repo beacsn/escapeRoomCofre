@@ -1,3 +1,4 @@
+
 <div class="flex flex-col items-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-2">
 
   <!-- PANTALLA INICIAL -->
@@ -172,3 +173,33 @@
   </div>
 
 </div>
+
+<!-- Overlay del perro tras superar el laberinto -->
+@if (mostrarPerro()){
+  <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+    <div class="text-center animate-fade-in max-w-sm px-6">
+
+      <img
+        [src]="perroBase64"
+        alt="El perro guardián"
+        class="rounded-xl shadow-2xl mb-6 mx-auto"
+      />
+
+      <p class="text-success font-mono tracking-widest mb-6">
+        EL GUARDIÁN APRUEBA EL AVANCE 🐾
+        EL PRIMER DÍGITO DEL CÓDIGO ES: <span class="text-warning text-3xl font-bold">2</span>
+      </p>
+
+      <button
+        class="btn btn-success btn-wide"
+        (click)="continuar()"
+      >
+        Continuar
+      </button>
+
+    </div>
+  </div>
+}
+
+
+

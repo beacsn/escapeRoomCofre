@@ -18,6 +18,10 @@
 
         <span class="text-error font-semibold">
           Un ajuste impreciso romperá la sintonía.
+        </span><br><br>
+
+        <span class="text-info font-semibold">
+          Una vez encontrada la señal, mantén la frecuencia estable durante {{ tiempoSintonizacionMs / 1000 }} segundos.
         </span>
       </p>
 
@@ -121,19 +125,15 @@
 </div>
 @if (mostrarTransicion) {
   <div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-
-    <div class="bg-neutral text-neutral-content
-                p-8 rounded-xl shadow-2xl
-                text-center max-w-sm animate-fade-in">
+    <div class="text-center animate-fade-in max-w-sm px-6">
 
       <img
         [src]="imagenPerro"
         alt="Mensaje especial"
-        class="w-48 h-48 object-cover rounded-full mx-auto mb-6
-               border-4 border-success shadow-lg"
+        class="rounded-xl shadow-2xl mb-6 mx-auto"
       />
 
-      <p class="mb-6 text-sm leading-relaxed">
+       <p class="text-success font-mono tracking-widest mb-6">
         {{ mensajePerro }}
       </p>
 

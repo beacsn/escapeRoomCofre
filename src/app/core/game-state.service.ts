@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
 export class GameStateService {
 
   // ⏱️ TIEMPO
-  timeLeft = signal(1800); // 30 min
+  timeLeft = signal(900); // 15 min
   private intervalId: any;
 
   startTimer() {
