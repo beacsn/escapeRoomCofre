@@ -1,4 +1,4 @@
-<div class="fixed inset-0 bg-black text-neutral-content flex items-center justify-center">
+<div class="fixed inset-0 bg-black text-neutral-content overflow-y-auto">
 
   <!-- Barras cinematográficas -->
   <div class="absolute top-0 left-0 w-full h-20 bg-black z-10"></div>
@@ -7,40 +7,59 @@
   <!-- Spotlight -->
   <div class="absolute inset-0 spotlight"></div>
 
-  <!-- Contenido -->
-  <div class="relative z-20 text-center px-6 max-w-xl animate-fade-in">
+  <!-- Wrapper scrolleable centrado -->
+  <div class="relative z-20 min-h-screen
+              flex items-center justify-center
+              px-6 py-24">
 
-    <h1 class="text-4xl md:text-5xl font-mono text-success tracking-widest mb-6">
-      MISIÓN COMPLETADA
-    </h1>
+    <!-- Contenido -->
+    <div class="text-center max-w-xl animate-fade-in">
 
-    <div class="text-6xl mb-6 animate-pulse">
-      🗝️
+      <h1 class="text-4xl md:text-5xl font-mono text-success tracking-widest mb-6">
+        MISIÓN COMPLETADA
+      </h1>
+
+      <div class="text-6xl mb-6 animate-pulse">
+        🗝️
+      </div>
+
+      <!-- Imagen final -->
+      <div class="mb-8 flex justify-center animate-fade-in">
+        <img
+          [src]="imagenFinal"
+          alt="El verdadero cómplice"
+          class="w-44 h-44 md:w-56 md:h-56
+                 object-cover rounded-2xl
+                 shadow-2xl shadow-black/60
+                 border-4 border-success/40"
+        />
+      </div>
+
+      <p class="text-lg leading-relaxed mb-6 opacity-90">
+        Has superado todas las pruebas.<br>
+        El cofre ha sido abierto.<br><br>
+
+        Desde el inicio, el sistema lo sabía.<br>
+        Algunas cosas solo se abren<br>
+        cuando se confía… y se avanza juntos.
+      </p>
+
+      <p class="text-xl font-semibold text-warning mb-10">
+        🎉 ¡Felicidades! 🎉
+      </p>
+
+      <div class="flex flex-col gap-4 items-center">
+        <button class="btn btn-success btn-wide">
+          Disfruta tu regalo
+        </button>
+
+        <button
+          class="btn btn-ghost btn-sm opacity-70"
+          (click)="volverAlInicio()">
+          Volver al inicio
+        </button>
+      </div>
+
     </div>
-
-    <p class="text-lg leading-relaxed mb-6 opacity-90">
-      Has superado todas las pruebas.<br>
-      El cofre ha sido abierto.<br><br>
-
-      Desde el inicio, el sistema lo sabía.<br>
-      Algunas cosas solo se abren<br>
-      cuando se confía… y se avanza juntos.
-    </p>
-
-
-    <p class="text-xl font-semibold text-warning mb-10">
-      🎉 ¡Felicidades! 🎉
-    </p>
-
-    <div class="flex flex-col gap-4 items-center">
-      <button class="btn btn-success btn-wide">
-        Disfruta tu regalo
-      </button>
-
-      <button class="btn btn-ghost btn-sm opacity-70" (click)="volverAlInicio()">
-        Volver al inicio
-      </button>
-    </div>
-
   </div>
 </div>

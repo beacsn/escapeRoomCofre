@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GameStateService } from '../../core/game-state.service';
-import { PERRO_BASE64 } from '../tro-image';
+import { PERRO_BASE64 } from '../images.base64';
 
 @Component({
   selector: 'app-radio',
