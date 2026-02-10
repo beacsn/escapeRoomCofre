@@ -223,6 +223,6 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
 
   continuar(): void {
     this.mostrarTransicion = false;
-    this.router.navigate(['/tercera-prueba']);
+    this.router.navigate(['/cables']);
   }
 }

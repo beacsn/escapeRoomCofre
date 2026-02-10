@@ -18,7 +18,7 @@ export const routes: Routes = [
       { path: '', component: InicioComponent },
       { path: 'laberinto', component: LaberintoComponent },
       { path: 'radio', component: RadioComponent },
-      { path: 'tercera-prueba', component: CablesComponent },
+      { path: 'cables', component: CablesComponent },
       { path: 'final', component: FinalComponent },
       { path: 'felicidades', component: FelicidadesComponent },
     ]
