@@ -6,9 +6,10 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GameStateService } from '../../core/game-state.service';
+import { PERRO_BASE64 } from '../tro-image';
 
 @Component({
   selector: 'app-radio',
@@ -18,7 +19,10 @@ import { GameStateService } from '../../core/game-state.service';
 })
 export class RadioComponent implements AfterViewInit, OnDestroy {
 
- constructor(private game: GameStateService) {}
+  constructor(
+    private game: GameStateService,
+    private router: Router
+  ) {}
 
   // ======================
   // CONFIGURACIÓN GENERAL
@@ -45,6 +49,10 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
 
   juegoIniciado: boolean = false;
 
+  // 👉 NUEVO: transición emocional
+  mostrarTransicion: boolean = false;
+  imagenPerro = PERRO_BASE64;
+  mensajePerro = 'Buen trabajo. Él también estaría orgulloso 🐾';
 
   // ======================
   // AUDIO
@@ -64,6 +72,8 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
     // Audio de señal encontrada
     this.audioSignal = new Audio('assets/audio/signal-found.mp3');
     this.audioSignal.volume = 0.8;
+
+    // silenciar audio global
     this.game.muteAudio();
   }
 
@@ -76,7 +86,8 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
       this.audioPlayerRef.nativeElement.pause();
     }
 
-     this.game.unmuteAudio();
+    // restaurar audio global
+    this.game.unmuteAudio();
   }
 
   // ======================
@@ -110,7 +121,8 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
   // ======================
 
   comprobarSintonizacion(): void {
-     if (!this.juegoIniciado) return;
+    if (!this.juegoIniciado) return;
+
     this.unlockAudio();
 
     const distancia = Math.abs(
@@ -148,6 +160,7 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
       // 3️⃣ Se completa la prueba tras una pausa
       setTimeout(() => {
         this.pruebaCompletada = true;
+        this.mostrarTransicion = true; // 👈 aquí está la clave
       }, this.tiempoMostrarCodigoMs + this.tiempoTensionMs);
 
     }, this.tiempoSintonizacionMs);
@@ -208,4 +221,8 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
     this.juegoIniciado = true;
   }
 
+  continuar(): void {
+    this.mostrarTransicion = false;
+    this.router.navigate(['/tercera-prueba']);
+  }
 }

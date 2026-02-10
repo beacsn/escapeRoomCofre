@@ -1,0 +1,22 @@
+<div class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+
+  <div class="bg-neutral text-neutral-content
+              p-8 rounded-xl shadow-2xl
+              text-center max-w-sm animate-fade-in">
+
+    <img
+      [src]="imagenBase64"
+      alt="Mensaje especial"
+      class="w-48 h-48 object-cover rounded-full mx-auto mb-6 border-4 border-success shadow-lg"
+    />
+
+    <p class="mb-6 text-sm leading-relaxed">
+      {{ mensaje }}
+    </p>
+
+    <button class="btn btn-success btn-wide" (click)="seguir()">
+      Continuar
+    </button>
+
+  </div>
+</div>
