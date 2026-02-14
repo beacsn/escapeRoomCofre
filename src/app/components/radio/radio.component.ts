@@ -87,7 +87,7 @@ export class RadioComponent implements AfterViewInit, OnDestroy {
     }
 
     // restaurar audio global
-    this.game.unmuteAudio();
+    //this.game.unmuteAudio();
   }
 
   // ======================
